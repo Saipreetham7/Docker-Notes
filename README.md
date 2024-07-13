@@ -116,4 +116,74 @@ docker container run --detach --publish 8080:80 fhsinchy/hello-dock
 The order of the **_options_** you provide doesn't really matter. If you put the **_--publish_** option before the **_--detach_** option, it'll work just the same. One thing that you have to keep in mind in case of the **_run_** command is that the image name must come last. If you put anything after the image name then that'll be passed as an argument to the container entry-point and may result in unexpected situations.
 
 ### 4. How to List Containers
+The container ls command can be used to list out containers that are currently running. To do so execute following command:
 
+```shell
+docker container ls
+
+# CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                  NAMES
+# 9f21cb777058        fhsinchy/hello-dock   "/docker-entrypoint.…"   5 seconds ago       Up 5 seconds        0.0.0.0:8080->80/tcp   gifted_sammet
+```
+The container ls command only lists the containers that are currently running on your system. In order to list out the containers that have run in the past you can use the --all or -a option.
+
+```shell
+docker container ls --all
+
+# CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS                     PORTS                  NAMES
+# 9f21cb777058        fhsinchy/hello-dock   "/docker-entrypoint.…"   2 minutes ago       Up 2 minutes               0.0.0.0:8080->80/tcp   gifted_sammet
+# 6cf52771dde1        fhsinchy/hello-dock   "/docker-entrypoint.…"   3 minutes ago       Exited (0) 3 minutes ago                          reverent_torvalds
+# 128ec8ceab71        hello-world           "/hello"                 4 minutes ago       Exited (0) 4 minutes ago                          exciting_chebyshev
+```
+
+### 5. How to Name or Rename a Container
+By default, every container has two identifiers. They are as follows:
+  - **CONTAINER ID** - a random 64 character-long string.
+  - **NAME** - combination of two random words, joined with an underscore.
+
+Naming a container can be achieved using the --name option:
+```shell
+docker container run --detach --publish 8888:80 --name hello-dock-container fhsinchy/hello-dock
+
+# b1db06e400c4c5e81a93a64d30acc1bf821bed63af36cab5cdb95d25e114f5fb
+```
+
+You can even rename old containers using the container rename command. Syntax for the command is as follows:
+```shell
+docker container rename <container identifier> <new name>
+```
+
+### 6. How to Stop or Kill a Running Container
+Containers running in the foreground can be stopped by simply closing the terminal window or hitting ctrl + c. Containers running in the background, however, can not be stopped in the same way.
+
+There are two commands that deal with this task. The first one is the container stop command. Generic syntax for the command is as follows:
+```shell
+docker container stop <container identifier>
+```
+
+Where container identifier can either be the id or the name of the container.
+
+The stop command shuts down a container gracefully by sending a SIGTERM signal. If the container doesn't stop within a certain period, a SIGKILL signal is sent which shuts down the container immediately.
+
+In cases where you want to send a SIGKILL signal instead of a SIGTERM signal, you may use the container kill command instead. 
+```shell
+docker container kill <container identifier>
+```
+
+### 7. How to Restart a Container
+When I say restart I mean two scenarios specifically. They are as follows:
+- Restarting a container that has been previously stopped or killed.
+- Rebooting a running container.
+
+Stopped containers remain in your system in cache. If you want you can restart them. The container start command can be used to start any stopped or killed container. The syntax of the command is as follows:
+```shell
+docker container start <container identifier>
+```
+The container start command starts any container in detached mode by default and retains any port configurations made previously.
+
+Now, in scenarios where you would like to reboot a running container you may use the container restart command. 
+```shell
+docker container restart <container identifier>
+```
+The main difference between the two commands is that the **container restart** command attempts to stop the target container and then starts it back up again, whereas the start command just starts an already stopped container.
+
+In case of a stopped container, both commands are exactly the same. But in case of a running container, you must use the **container restart** command.
