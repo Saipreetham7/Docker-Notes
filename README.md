@@ -129,7 +129,7 @@ The container ls command only lists the containers that are currently running on
 ```shell
 docker container ls --all
 
-# CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS                     PORTS                  NAMES
+# CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS                     PORTS                  NAMES
 # 9f21cb777058        fhsinchy/hello-dock   "/docker-entrypoint.…"   2 minutes ago       Up 2 minutes               0.0.0.0:8080->80/tcp   gifted_sammet
 # 6cf52771dde1        fhsinchy/hello-dock   "/docker-entrypoint.…"   3 minutes ago       Exited (0) 3 minutes ago                          reverent_torvalds
 # 128ec8ceab71        hello-world           "/hello"                 4 minutes ago       Exited (0) 4 minutes ago                          exciting_chebyshev
@@ -166,7 +166,7 @@ The stop command shuts down a container gracefully by sending a SIGTERM signal. 
 
 In cases where you want to send a SIGKILL signal instead of a SIGTERM signal, you may use the container kill command instead. 
 ```shell
-$ docker container kill <container identifier>
+docker container kill <container identifier>
 ```
 
 ### 7. How to Restart a Container
@@ -176,13 +176,13 @@ When I say restart I mean two scenarios specifically. They are as follows:
 
 Stopped containers remain in your system in cache. If you want you can restart them. The container start command can be used to start any stopped or killed container. The syntax of the command is as follows:
 ```shell
-$ docker container start <container identifier>
+docker container start <container identifier>
 ```
 The container start command starts any container in detached mode by default and retains any port configurations made previously.
 
 Now, in scenarios where you would like to reboot a running container you may use the container restart command. 
 ```shell
-$ docker container restart <container identifier>
+docker container restart <container identifier>
 ```
 The main difference between the two commands is that the **container restart** command attempts to stop the target container and then starts it back up again, whereas the start command just starts an already stopped container.
 
@@ -195,7 +195,7 @@ The container run command which is in reality a combination of two separate comm
 
 "How to Run a Container" section using these two commands, you can do something like the following:
 ```shell
-$ docker container create --publish 8080:80 fhsinchy/hello-dock
+docker container create --publish 8080:80 <container name>
 
 # 2e7ef5098bab92f4536eb9a372d9b99ed852a9a816c341127399f51a6d053856
 
@@ -204,3 +204,72 @@ $ docker container ls --all
 # CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS               NAMES
 # 2e7ef5098bab        fhsinchy/hello-dock   "/docker-entrypoint.…"   30 seconds ago      Created                                 hello-dock
 ```
+
+Once the container has been created, it can be started using the container start command.
+
+```shell
+docker container start <image name>
+
+docker container ls
+```
+
+### 9. How to Remove Dangling Containers
+Containers that have been stopped or killed remain in the system. These dangling containers can take up space or can conflict with newer containers.
+
+In order to remove a stopped container you can use the container rm command. The generic syntax is as follows:
+```shell
+docker container rm <container identifier>
+```
+
+To find out which containers are not running, use the container ls --all command and look for containers with Exited status.
+
+You can also remove multiple containers at once by passing their identifiers one after another separated by spaces.
+
+Or, instead of removing individual containers, if you want to remove all dangling containers at one go, you can use the container prune command.
+
+There is also the --rm option for the container run  and container start commands which indicates that you want the containers removed as soon as they're stopped. 
+
+```bash
+docker container run --rm --detach --publish 8888:80 --name <identifier Name> <image name>
+```
+### 10. How to Run a Container in Interactive Mode
+
+As you may have already learned from your previous experiences with computers, shells are interactive programs. An image configured to run such a program is an interactive image. These images require a special **_-it_** option to be passed in the **container run** command.
+
+As an example, if you run a container using the **ubuntu** image by executing <mark>**docker container run ubuntu**</mark> you'll see nothing happens. But if you execute the same command with the <mark>**-it**</mark> option, you should land directly on bash inside the Ubuntu container.
+
+```shell
+docker container run --rm -it ubuntu
+
+# root@dbb1f56b9563:/# cat /etc/os-release
+# NAME="Ubuntu"
+# VERSION="20.04.1 LTS (Focal Fossa)"
+# ID=ubuntu
+# ID_LIKE=debian
+# PRETTY_NAME="Ubuntu 20.04.1 LTS"
+# VERSION_ID="20.04"
+# HOME_URL="https://www.ubuntu.com/"
+# SUPPORT_URL="https://help.ubuntu.com/"
+# BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+# PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+# VERSION_CODENAME=focal
+# UBUNTU_CODENAME=focal
+```
+
+The <mark>**-it**</mark> option sets the stage for you to interact with any interactive program inside a container. This option is actually two separate options mashed together.
+- The <mark>**-i**</mark> or <mark>**--interactive**</mark> option connects you to the input stream of the container, so that you can send inputs to bash.
+
+- The <mark>**-t**</mark> or <mark>**--tty**</mark> option makes sure that you get some good formatting and a native terminal-like experience by allocating a pseudo-tty.
+
+### 11. How to Execute Commands Inside a Container
+The generic syntax for passing a command to a container that is not running is as follows:
+
+```shell
+docker container run <image name> <command>
+```
+### 12. How to Work With Executable Images
+
+
+
+
+
