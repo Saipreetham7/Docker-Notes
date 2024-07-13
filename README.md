@@ -166,7 +166,7 @@ The stop command shuts down a container gracefully by sending a SIGTERM signal. 
 
 In cases where you want to send a SIGKILL signal instead of a SIGTERM signal, you may use the container kill command instead. 
 ```shell
-docker container kill <container identifier>
+$ docker container kill <container identifier>
 ```
 
 ### 7. How to Restart a Container
@@ -176,14 +176,31 @@ When I say restart I mean two scenarios specifically. They are as follows:
 
 Stopped containers remain in your system in cache. If you want you can restart them. The container start command can be used to start any stopped or killed container. The syntax of the command is as follows:
 ```shell
-docker container start <container identifier>
+$ docker container start <container identifier>
 ```
 The container start command starts any container in detached mode by default and retains any port configurations made previously.
 
 Now, in scenarios where you would like to reboot a running container you may use the container restart command. 
 ```shell
-docker container restart <container identifier>
+$ docker container restart <container identifier>
 ```
 The main difference between the two commands is that the **container restart** command attempts to stop the target container and then starts it back up again, whereas the start command just starts an already stopped container.
 
 In case of a stopped container, both commands are exactly the same. But in case of a running container, you must use the **container restart** command.
+
+### 8. How to Create a Container Without Running
+The container run command which is in reality a combination of two separate commands. These commands are as follows:
+- **container create** command creates a container from a given image.
+- **container start** command starts a container that has been already created.
+
+"How to Run a Container" section using these two commands, you can do something like the following:
+```shell
+$ docker container create --publish 8080:80 fhsinchy/hello-dock
+
+# 2e7ef5098bab92f4536eb9a372d9b99ed852a9a816c341127399f51a6d053856
+
+$ docker container ls --all
+
+# CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS               NAMES
+# 2e7ef5098bab        fhsinchy/hello-dock   "/docker-entrypoint.…"   30 seconds ago      Created                                 hello-dock
+```
