@@ -1,5 +1,58 @@
 # Docker-Notes
 
+## Introduction to Containerization and Docker
+- Containerization involves encapsulating or packaging up software code and all its dependencies so that it can run uniformly and consistently on any infrastructure.
+
+Docker can solve the issues like:
+- Develop and run the application inside an isolated environment (known as a container) that matches your final deployment environment.
+- Put your application inside a single file (known as an image) along with all its dependencies and necessary deployment configurations.
+- And share that image through a central server (known as a registry) that is accessible by anyone with proper authorization.
+
+**Now the question is "What role does Docker play here?"**. </br>
+It's an open-source containerization platform that allows you to containerize your applications, share them using public or private registries, and also to orchestrate them.
+
+## What is a Container?
+A container is an abstraction at the application layer that packages code and dependencies together. Instead of virtualizing the entire physical machine, containers virtualize the host operating system only.
+
+### Virtual Machine vs Container
+Just like virtual machines, containers are completely isolated environments from the host system as well as from each other. They are also a lot lighter than the traditional virtual machine, so a large number of containers can be run simultaneously without affecting the performance of the host system.
+
+Containers and virtual machines are actually different ways of virtualizing your physical hardware. The main difference between these two is the method of virtualization.
+
+**Virtual Machine**
+
+![alt text](https://www.freecodecamp.org/news/content/images/2021/04/virtual-machines.svg)
+
+Each virtual machine comes with its own guest operating system which is just as heavy as the host operating system.
+
+The application running inside a virtual machine communicates with the guest operating system, which talks to the hypervisor, which then in turn talks to the host operating system to allocate necessary resources from the physical infrastructure to the running application.
+
+As you can see, there is a long chain of communication between applications running inside virtual machines and the physical infrastructure. The application running inside the virtual machine may take only a small amount of resources, but the guest operating system adds a noticeable overhead.
+
+Unlike a virtual machine, a container does the job of virtualization in a smarter way. Instead of having a complete guest operating system inside a container, it just utilizes the host operating system via the container runtime while maintaining isolation – just like a traditional virtual machine.
+
+**Container**
+
+![alt text](https://www.freecodecamp.org/news/content/images/2021/04/containers.svg)
+
+The container runtime, that is Docker, sits between the containers and the host operating system instead of a hypervisor. The containers then communicate with the container runtime which then communicates with the host operating system to get necessary resources from the physical infrastructure.
+
+As a result of eliminating the entire guest operating system layer, containers are much lighter and less resource-hogging than traditional virtual machines.
+
+## What is Docker Image?
+Images are multi-layered self-contained files that act as the template for creating containers. They are like a frozen, read-only copy of a container. Images can be exchanged through registries.
+
+Containers are just images in running state. When you obtain an image from the internet and run a container using that image, you essentially create another temporary writable layer on top of the previous read-only ones.
+
+## What is a Docker Registry?
+An image registry is a centralized place where you can upload your images and can also download images created by others. Docker Hub is the default public registry for Docker. Another very popular image registry is Quay by Red Hat.
+
+![alt text](https://www.freecodecamp.org/news/content/images/2021/01/docker-hub.png)
+
+
+
+
+
 ## Docker Container Manipulation Basics
 
 ### 1. How to Run a Container
