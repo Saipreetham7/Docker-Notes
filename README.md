@@ -270,6 +270,99 @@ docker container run <image name> <command>
 ### 12. How to Work With Executable Images
 
 
+## Docker Image Manipulation Basics
 
+### 1. How to Create a Docker Image
 
+A Dockerfile is a collection of instructions that, once processed by the daemon, results in an image. 
+
+Example, Content for the Dockerfile is as follows:
+```shell
+FROM ubuntu:latest
+
+EXPOSE 80
+
+RUN apt-get update && \
+    apt-get install nginx -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+Images are multi-layered files and in this file, each line (known as instructions) that you've written creates a layer for your image.
+
+- Every valid <mark>Dockerfile</mark> starts with a <mark>**FROM**</mark> instruction. This instruction sets the base image for your resultant image. By setting <mark>ubuntu:latest</mark> as the base image here, you get all the goodness of Ubuntu already available in your custom image, so you can use things like the <mark>apt-get</mark> command for easy package installation.
+
+- The <mark>EXPOSE</mark> instruction is used to indicate the port that needs to be published. Using this instruction doesn't mean that you won't need to <mark>--publish</mark> the port. You'll still need to use the <mark>--publish</mark> option explicitly. This <mark>EXPOSE</mark> instruction works like a documentation for someone who's trying to run a container using your image. It also has some other uses that I won't be discussing here.
+
+- The <mark>RUN</mark> instruction in a Dockerfile executes a command inside the container shell. The <mark>apt-get update && apt-get install nginx -y</mark> command checks for updated package versions and installs NGINX. The <mark>apt-get clean && rm -rf /var/lib/apt/lists/*</mark> command is used for clearing the package cache because you don't want any unnecessary baggage in your image. These two commands are simple Ubuntu stuff, nothing fancy. The <mark>RUN</mark> instructions here are written in <mark>shell</mark> form. These can also be written in <mark>exec</mark> form.
+
+- Finally the <mark>CMD</mark> instruction sets the default command for your image. This instruction is written in <mark>exec</mark> form here comprising of three separate parts. Here, nginx refers to the <mark>NGINX</mark> executable. The <mark>-g</mark> and <mark>daemon off</mark> are options for NGINX. Running NGINX as a single process inside containers is considered a best practice hence the usage of this option. The <mark>CMD</mark> instruction can also be written in shell form.
+
+Now that you have a valid Dockerfile you can build an image out of it:
+```shell
+docker image <command> <options>
+```
+
+To perform an image build, the daemon needs two very specific pieces of information. These are the name of the <mark>Dockerfile</mark> and the build context. In the command issued above:
+- <mark>docker image build</mark> is the command for building the image. The daemon finds any file named <mark>Dockerfile</mark> within the context.
+- The <mark>.</mark> at the end sets the context for this build. The context means the directory accessible by the daemon during the build process.
+
+Now to run a container using this image, you can use the <mark>container run</mark> command coupled with the image ID that you received as the result of the build process.
+
+### 2. How to Tag Docker Images
+Just like containers, you can assign custom identifiers to your images instead of relying on the randomly generated ID. In case of an image, it's called tagging instead of naming. The <mark>--tag</mark> or <mark>-t<mark> option is used in such cases.
+
+Generic syntax for the option is as follows:
+
+```shell
+--tag <image repository>:<image tag>
+```
+
+In cases where you forgot to tag an image during build time, or maybe you want to change the tag, you can use the image tag command to do that:
+
+```shell
+docker image tag <image id> <image repository>:<image tag>
+
+## or ##
+
+docker image tag <image repository>:<image tag> <new image repository>:<new image tag>
+```
+
+### 3. How to List and Remove Docker Images
+
+Just like the container ls command, you can use the image ls command to list all the images in your local system:
+
+```shell
+docker image ls
+```
+
+Images listed here can be deleted using the image rm command. The generic syntax is as follows:
+
+```shell
+docker image rm <image identifier>
+```
+
+You can also use the <mark>image prune</mark> command to cleanup all un-tagged dangling images as follows:
+
+```shell
+docker image prune --force
+```
+
+The <mark>--force</mark> or <mark>-f</mark> option skips any confirmation questions. You can also use the <mark>--all</mark> or <mark>-a</mark> option to remove all cached images in your local registry.
+
+### 4. How to Understand the Many Layers of a Docker Image
+
+To visualize the many layers of an image, you can use the image history command.
+```shell
+docker image history custom-nginx:packaged
+```
+
+The image comprises of many read-only layers, each recording a new set of changes to the state triggered by certain instructions. When you start a container using an image, you get a new writable layer on top of the other layers.
+
+This layering phenomenon that happens every time you work with Docker has been made possible by an amazing technical concept called a union file system. Here, union means union in set theory. According to Wikipedia -
+
+It allows files and directories of separate file systems, known as branches, to be transparently overlaid, forming a single coherent file system. Contents of directories which have the same path within the merged branches will be seen together in a single merged directory, within the new, virtual filesystem.
+By utilizing this concept, Docker can avoid data duplication and can use previously created layers as a cache for later builds. This results in compact, efficient images that can be used everywhere.
+
+### 5. How to Build NGINX from Source
 
